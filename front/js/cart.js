@@ -4,6 +4,8 @@
 // On recupere les elements de notre HMTL
 let cart__items = document.querySelector('#cart__items');
 let orderId = "";
+
+
 // Declaration des variables en global pour creation d'elements
 let article;
 let cart__item__img;
@@ -305,9 +307,6 @@ buttonForm.addEventListener('click', (event) => {
   if(testFirstName && testLastName && testAddress && testCity && testEmail){
     localStorage.setItem('contact', JSON.stringify(contact));
 
-    console.log(contact);
-    console.log(products);
-
     sendToServer();
 
   } else {
@@ -321,6 +320,7 @@ buttonForm.addEventListener('click', (event) => {
 
 
 // ------------------------------------------------- Requete POST ----------------------------------------------------------
+
 
 const url = "http://localhost:3000/api/products/order";
 
@@ -336,13 +336,11 @@ async function sendToServer(){
     alert("Une erreur s'est produite !");
   } else {
     let reponse = await requete.json();
-    console.log(reponse);
 
     orderId = reponse.orderId;
-    console.log(orderId);
 
     if(orderId != ""){
-      location.assign('confirmation.html?id=' + orderId)
+      location.href = 'confirmation.html?id=' + orderId;
     }
   }
 
