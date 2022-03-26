@@ -22,6 +22,7 @@ let input;
 let cart__item__content__settings__delete;
 let pDelete;
 
+
 // On declare les variables quantite et total en global en leur attribuant la valeur 0
 let quantiteArticle = 0;
 let total = 0;
@@ -31,34 +32,54 @@ let total = 0;
 let donnees = JSON.parse(localStorage.getItem('tableauProduit'));
 let products = [];
 
+
 // On verifie si le tableau qui est dans le localStorage qu'on a nommé ici donnees est different de null
 if (donnees != null) {
   for (let i = 0; i < donnees.length; i++) {
 
-    // Appel des fonctions creerElementHtml, modifierQuantite et supprimerPorduit en leur attribuant (i) comme arguement.
-    creerElementHtml(i);
-    supprimerProduit(i);
-
-    // Calcule de la quantité d'articles dans le panier.
-    quantiteArticle += parseInt(donnees[i].quantite);
-
-    // Ajout de la quantité totale dans le HTML.
-    document.querySelector('#totalQuantity').textContent = `${quantiteArticle}`;
-
-    // Calcule du prix total du panier.
-    total = total + parseInt(donnees[i].quantite) * parseInt(donnees[i].price);
-
-    // Ajout du prix total dans le HTML.
-    document.querySelector('#totalPrice').textContent = `${total}`;
+    // Appel des fonctions creerModifierElementHtml() en lui attribuant (i) comme argument.
+    creerModifierSupElementHtml(i);
 
     products.push(donnees[i].id);
   }
 }
 
 
-// Création et configurations des élements HTML via Javascript.
-function creerElementHtml(i) {
+// Appel les données du produit concerné.
+async function creerModifierSupElementHtml(i) {
+    let requete =  await fetch(`http://localhost:3000/api/products/` + donnees[i].id, {
+      method: "GET",
+    });
+    if(!requete.ok){
+      alert('Une erreur s\'est produite dans la récuperation des données du produit.');
+    } else {
+      let response = await requete.json();
+      console.log(response);
 
+      // Appel de la fonction pour créer les élements HTML
+      creationElement(response, i);
+
+      // Recuperer tout les input sous forme de tableau
+      let inputAll = Array.from(document.querySelectorAll('.itemQuantity'));
+
+      // On réalise un forEach sur le tableau des inputs et on met en parametre la fonction modifierQuantite
+      inputAll.forEach(modifierQuantite);
+
+      // Appel de la fonction pour supprimer un produit du panier
+      supprimerProduit(i);
+
+      // Appel de la fonction pour calculer la quantité totale
+      calculQty(i);
+
+      // Appel de la fonction pour calculer le prix total
+      calculTotal(response, i);
+
+    }
+}
+
+
+// Création et configurations des élements HTML via Javascript.
+function creationElement(reponse, i){
   article = document.createElement('article');
   article.className = 'cart__item';
   article.dataset.id = `${donnees[i].id}`;
@@ -70,8 +91,8 @@ function creerElementHtml(i) {
   article.appendChild(cart__item__img);
 
   img = document.createElement('img');
-  img.src = `${donnees[i].image}`;
-  img.alt = `${donnees[i].altTxt}`;
+  img.src = `${reponse.imageUrl}`;
+  img.alt = `${reponse.altTxt}`;
   cart__item__img.appendChild(img);
 
   cart__item__content = document.createElement('div');
@@ -83,7 +104,7 @@ function creerElementHtml(i) {
   cart__item__content.appendChild(cart__item__content__description);
 
   h2 = document.createElement('h2');
-  h2.textContent = `${donnees[i].name}`;
+  h2.textContent = `${reponse.name}`;
   cart__item__content__description.appendChild(h2);
 
   pColor = document.createElement('p');
@@ -91,7 +112,7 @@ function creerElementHtml(i) {
   cart__item__content__description.appendChild(pColor);
 
   pPrix = document.createElement('p');
-  pPrix.textContent = `${donnees[i].price} €`;
+  pPrix.textContent = `${reponse.price} €`;
   cart__item__content__description.appendChild(pPrix);
 
   cart__item__content__settings = document.createElement('div');
@@ -131,9 +152,9 @@ function modifierQuantite(quantite, i) {
   quantite.addEventListener('change', () => {
     donnees[i].quantite = quantite.value;
     localStorage.setItem('tableauProduit', JSON.stringify(donnees));
-    location.reload();  
+    location.reload();
 
-    if(donnees[i].quantite == 0){
+    if (donnees[i].quantite == 0) {
       produitTab = donnees.filter(e => e.quantite != donnees[i].quantite);
       localStorage.setItem('tableauProduit', JSON.stringify(produitTab));
       article.remove();
@@ -145,17 +166,11 @@ function modifierQuantite(quantite, i) {
   })
 }
 
-// Recuperer tout les input sous forme de tableau
-let inputAll = Array.from(document.querySelectorAll('.itemQuantity'));
-
-// On réalise un forEach sur le tableau des inputs et on met en parametre la fonction modifierQuantite
-inputAll.forEach(modifierQuantite);
-
 
 // Suppression d'un article du panier
 function supprimerProduit(i) {
   produitTab = JSON.parse(localStorage.getItem('tableauProduit'));
-  pDelete.addEventListener('click', () => {
+    pDelete.addEventListener('click', () => {
 
     produitTab = donnees.filter(e => e.id != donnees[i].id || e.color != donnees[i].color);
     localStorage.setItem('tableauProduit', JSON.stringify(produitTab));
@@ -165,6 +180,24 @@ function supprimerProduit(i) {
     }
     location.reload();
   })
+}
+
+
+ // Calcule de la quantité d'articles dans le panier.
+function calculQty(i) { 
+  quantiteArticle += parseInt(donnees[i].quantite);
+
+  // Ajout de la quantité totale dans le HTML.
+  document.querySelector('#totalQuantity').textContent = `${quantiteArticle}`;
+}
+
+
+// Calcul du prix total
+function calculTotal(reponse, i) { 
+    total = total + parseInt(donnees[i].quantite) * parseInt(reponse.price);
+
+    // Ajout du prix total dans le HTML.
+    document.querySelector('#totalPrice').textContent = `${total}`;
 }
 
 
@@ -194,13 +227,13 @@ let testEmail;
 
 
 // Controle input firstName
-function checkFristName(){
+function checkFristName() {
   // On recupere l'element p contenant le message d'erreur
   let errorFirstName = document.querySelector('#firstNameErrorMsg');
   testFirstName = nameRegExp.test(form.firstName.value);
 
   // Test de l'expression réguliere
-  if (testFirstName){
+  if (testFirstName) {
     errorFirstName.textContent = "Prénom Valide";
   } else {
     errorFirstName.textContent = "Prénom Non Valide";
@@ -293,29 +326,31 @@ let buttonForm = document.querySelector('#order');
 
 let contact = {};
 
-buttonForm.addEventListener('click', (event) => {
-  event.preventDefault();
+function validPanier() {
+  buttonForm.addEventListener('click', (event) => {
+    event.preventDefault();
 
-  contact = {
-    firstName : document.querySelector("#firstName").value,
-    lastName : document.querySelector("#lastName").value,
-    address : document.querySelector("#address").value,
-    city : document.querySelector("#city").value,
-    email : document.querySelector("#email").value,
-  };
+    contact = {
+      firstName: document.querySelector("#firstName").value,
+      lastName: document.querySelector("#lastName").value,
+      address: document.querySelector("#address").value,
+      city: document.querySelector("#city").value,
+      email: document.querySelector("#email").value,
+    };
 
-  if(testFirstName && testLastName && testAddress && testCity && testEmail){
-    localStorage.setItem('contact', JSON.stringify(contact));
+    if (testFirstName && testLastName && testAddress && testCity && testEmail) {
+      localStorage.setItem('contact', JSON.stringify(contact));
 
-    sendToServer();
+      sendToServer();
 
-  } else {
-    alert('Erreur dans la saisie des informations au niveau du formulaire !');
-  }
+    } else {
+      alert('Erreur dans la saisie des informations au niveau du formulaire !');
+    }
+  })
+}
 
-})
-
-
+// On appelle la fonction ValidPanier()
+validPanier();
 // ------------------------------------------------- Fin Formulaire Panier -------------------------------------------------
 
 
@@ -324,26 +359,25 @@ buttonForm.addEventListener('click', (event) => {
 
 const url = "http://localhost:3000/api/products/order";
 
-async function sendToServer(){
+async function sendToServer() {
   const requete = await fetch(url, {
     method: "POST",
-    body: JSON.stringify({contact, products}),
+    body: JSON.stringify({ contact, products }),
     headers: {
       "Content-Type": "application/json",
     }
   })
-  if(!requete.ok){
+  if (!requete.ok) {
     alert("Une erreur s'est produite !");
   } else {
     let reponse = await requete.json();
 
     orderId = reponse.orderId;
 
-    if(orderId != ""){
+    if (orderId != "") {
       location.href = 'confirmation.html?id=' + orderId;
     }
   }
-
 }
 
 
