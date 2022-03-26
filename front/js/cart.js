@@ -321,7 +321,7 @@ form.city.addEventListener('change', checkCity);
 form.email.addEventListener('change', checkEmail);
 
 
-// 
+// On recuperer le button du form
 let buttonForm = document.querySelector('#order');
 
 let contact = {};
