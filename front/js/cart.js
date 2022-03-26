@@ -321,7 +321,7 @@ form.city.addEventListener('change', checkCity);
 form.email.addEventListener('change', checkEmail);
 
 
-// Écoute du bouton Valider au click 
+// 
 let buttonForm = document.querySelector('#order');
 
 let contact = {};
@@ -351,6 +351,8 @@ function validPanier() {
 
 // On appelle la fonction ValidPanier()
 validPanier();
+
+
 // ------------------------------------------------- Fin Formulaire Panier -------------------------------------------------
 
 
