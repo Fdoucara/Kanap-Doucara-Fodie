@@ -234,9 +234,11 @@ function checkFristName() {
 
   // Test de l'expression réguliere
   if (testFirstName) {
-    errorFirstName.textContent = "Prénom Valide";
+    errorFirstName.textContent = "";
   } else {
     errorFirstName.textContent = "Prénom Non Valide";
+    errorFirstName.style.color = "orange";
+    errorFirstName.style.fontWeight = "bold";
   }
 }
 
@@ -249,9 +251,11 @@ function checkLastName() {
 
   // Test de l'expression réguliere
   if (testLastName) {
-    errorLastName.textContent = "Le format du nom est correct !";
+    errorLastName.textContent = "";
   } else {
     errorLastName.textContent = "Le format du nom est incorrect !";
+    errorLastName.style.color = "orange";
+    errorLastName.style.fontWeight = "bold";
   }
 }
 
@@ -264,9 +268,11 @@ function checkAddress() {
 
   // Test de l'expression réguliere
   if (testAddress) {
-    errorAddress.textContent = "Le format de l'adresse est correct !";
+    errorAddress.textContent = "";
   } else {
     errorAddress.textContent = "Le format de l'adresse est incorrect !";
+    errorAddress.style.color = "orange";
+    errorAddress.style.fontWeight = "bold";
   }
 }
 
@@ -279,9 +285,11 @@ function checkCity() {
 
   // Test de l'expression réguliere
   if (testCity) {
-    errorCity.textContent = "Le format de la ville est correct !";
+    errorCity.textContent = "";
   } else {
     errorCity.textContent = "Le format de la ville est incorrect !";
+    errorCity.style.color = "orange";
+    errorCity.style.fontWeight = "bold";
   }
 }
 
@@ -294,9 +302,11 @@ function checkEmail() {
 
   // Test de l'expression réguliere
   if (testEmail) {
-    errorEmail.textContent = "Le format du mail est correct !";
+    errorEmail.textContent = "";
   } else {
     errorEmail.textContent = "Le format du mail est incorrect !";
+    errorEmail.style.color = "orange";
+    errorEmail.style.fontWeight = "bold";
   }
 }
 
