@@ -359,8 +359,11 @@ validPanier();
 // ------------------------------------------------- Requete POST ----------------------------------------------------------
 
 
+// On declare une constante qui contient l'URL
 const url = "http://localhost:3000/api/products/order";
 
+
+// function asynchrone contenant la Requete POST
 async function sendToServer() {
   const requete = await fetch(url, {
     method: "POST",

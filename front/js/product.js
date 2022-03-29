@@ -53,6 +53,7 @@ async function recupProduit() {
 }
 
 
+// Fonction nous permettant d' ajouter un produit au panier.
 function ajouterProduitPanier() {
   // Memorisation des données dans le LocalStorage
   button.addEventListener('click', () => {

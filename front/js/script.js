@@ -1,8 +1,12 @@
+// On reupere les elements HTML important
 let items = document.querySelector('#items');
+
+// On declare une constante qui contient l'URL
 const urlProductAll = 'http://localhost:3000/api/products';
 
 
-async function recupLesProduit(){
+// Fonction asynchrone nous permettant de prendre et inserer les informations des produits.
+async function recupLesProduits(){
   let requete = await fetch(urlProductAll, {
     method: 'GET'
   });
@@ -19,6 +23,7 @@ async function recupLesProduit(){
 }
 
 
+// Création des elements HTML via JS
 function createElement(i) {
         let a = document.createElement('a');
         a.href = `./product.html?id=${reponse[i]._id}`
@@ -44,4 +49,5 @@ function createElement(i) {
 }
 
 
-recupLesProduit();
+// On appelle la fonction recupLesProduits
+recupLesProduits();
